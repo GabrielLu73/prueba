@@ -5,14 +5,9 @@ export default{
     beforeUpdate: async(event) => {
         const { data } = event.params;
 
-        console.log("Daily menu :", {
-            documentId: event.params.documentId,
-            datos: event.params.data,
-        });
-
         const priceMenu = await strapi.documents('api::dailymenu.dailymenu').findMany({
             filters: {
-                day: event.params.data.day,
+                day: data.day,
             },
             populate:{
                 first: {
@@ -27,14 +22,17 @@ export default{
             }
         });
 
-        const { first, second, dessert } = priceMenu[0];
+        const { first, second, dessert, documentId } = priceMenu[0];
 
         const result = (first?.price ?? 0) + (second?.price ?? 0) + (dessert?.price ?? 0);
 
         data.sum_price = result;
 
-        //Ensure that a dish is not repeated
+        const menuPriceIva = await strapi.service('api::dailymenu.01-custom-dailymenu').getPriceDishes(documentId);
+        data.menuPrice = menuPriceIva;
     },
+
+    //Ensure that a dish is not repeated
 
     afterUpdate: async( event ) => {
 
@@ -61,7 +59,7 @@ export default{
             first && dessert && first.id === dessert.id ||
             second && dessert && second.id === dessert.id
         ){
-            throw new ApplicationError('El mismo plato no puede ser usado como primero y segundo');
+            throw new ApplicationError('No se puede asiganr el mismo platos en varios campos');
         }
         //main
     }
