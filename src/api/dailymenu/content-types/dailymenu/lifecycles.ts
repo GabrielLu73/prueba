@@ -57,16 +57,12 @@ export default{
 
         const { first, second, dessert } = repit[0];
 
-        if (first && second && first.id === second.id) {
+        if (first && second && first.id === second.id || 
+            first && dessert && first.id === dessert.id ||
+            second && dessert && second.id === dessert.id
+        ){
             throw new ApplicationError('El mismo plato no puede ser usado como primero y segundo');
         }
-          
-        if (first && dessert && first.id === dessert.id) {
-            throw new ApplicationError('El mismo plato no puede ser usado como primero y postre');
-        }
-          
-        if (second && dessert && second.id === dessert.id) {
-            throw new ApplicationError('El mismo plato no puede ser usado como segundo y postre');
-        }
+        //service
     }
 }
