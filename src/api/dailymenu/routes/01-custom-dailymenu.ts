@@ -9,5 +9,14 @@ export default{
                 middlewares: []
             },
         },
+        {
+            method : 'GET',
+            path: '/dailymenus',
+            handler: '01-custom-dailymenu.findMenusByRangeOfPrice',
+            config: {
+                policies: [],
+                middlewares: []
+            },
+        },
     ],
 }
