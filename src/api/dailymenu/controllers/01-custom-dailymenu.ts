@@ -98,5 +98,6 @@ export default {
         } catch (error) {
             return ctx.badRequest('No se ha encontrado datos de la consulta de menus por rango')
         }
+        //control
     }
 }
