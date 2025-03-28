@@ -18,5 +18,14 @@ export default{
                 middlewares: []
             },
         },
+        {
+            method : 'GET',
+            path: '/dailymenus/populares',
+            handler: '01-custom-dailymenu.popularDishes',
+            config: {
+                policies: [],
+                middlewares: []
+            },
+        },
     ],
 }

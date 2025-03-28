@@ -21,6 +21,12 @@ export default factories.createCoreService('api::dailymenu.dailymenu', ({ strapi
         const menuPriceWithIva = await priceWithIVA(priceDishes);
         return menuPriceWithIva;
 
+    },
+    async findDishes(id) {
+        const dishes = await strapi.documents('api::dish.dish').findOne({
+            documentId: id
+        });
+        return dishes;
     }
 
 }),

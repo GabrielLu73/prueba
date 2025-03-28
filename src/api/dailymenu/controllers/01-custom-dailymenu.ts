@@ -1,3 +1,5 @@
+import { platform } from "os";
+
 export default {
     async findDesserts(ctx){
         try {
@@ -50,7 +52,7 @@ export default {
                 console.log(menu)
 
                 const filterss = menu.filter(m =>{
-                    const { first, second, dessert } = m
+                    const { first, second, dessert } = m;
 
                     const firstAller  = first?.allergens.some(al => allergensToExclude.includes(al.name));
                     const secondAller  = second?.allergens.some(al => allergensToExclude.includes(al.name));
@@ -71,10 +73,10 @@ export default {
                 }
             });
             
-            return ctx.send({message: "datos de los menus por precios", data: menus})
+            return ctx.send({message: "datos de los menus por precios", data: menus});
 
         } catch (error) {
-            return ctx.badRequest('No se ha encontrado datos de la consulta de menus por rango')
+            return ctx.badRequest('No se ha encontrado datos de la consulta de menus por rango');
         }
     },
     async findMenuWithFor(ctx){
@@ -96,8 +98,58 @@ export default {
             return ctx.send({message: "datos de los menus por precios", data: menufilter})
 
         } catch (error) {
-            return ctx.badRequest('No se ha encontrado datos de la consulta de menus por rango')
+            return ctx.badRequest('No se ha encontrado datos de la consulta de menus por rango o alergenos')
         }
-        //control
-    }
+    },
+    async popularDishes(ctx){
+        try {
+            const menus = await strapi.documents('api::dailymenu.dailymenu').findMany({
+                populate: { 
+                    first: { populate: { allergens: { fields: 'name',}}},
+                    second: { populate: { allergens: { fields: 'name',}}},
+                    dessert: { populate: { allergens: { fields: 'name',}}}
+                }
+            });
+
+            const nameCount = {}
+
+            for (const menu of menus) {
+                const { first, second, dessert } = menu;
+                
+                // Usar un array para procesar los tres tipos de platos de manera más concisa
+                [first, second, dessert].forEach(dish => {
+                    if (dish?.documentId) {
+                        nameCount[dish.documentId] = (nameCount[dish.documentId] || 0) + 1;
+                    }
+                });
+            }
+            
+            const namesArray = [];
+            for (const name in nameCount) {
+                namesArray.push({ documentId: name, count: nameCount[name] });
+            }
+            console.log(nameCount)
+
+            // Ordenar el array de mayor a menor frecuencia
+            namesArray.sort((a, b) => b.count - a.count);
+
+            // Mostrar los resultados ordenados
+            console.log('Nombres ordenados por frecuencia (de mayor a menor):');
+
+            const dishes = await Promise.all(
+                namesArray.map(async (item) => {
+                    const dish = await strapi.service('api::dailymenu.01-custom-dailymenu').findDishes(item.documentId);
+                    return {
+                        message: `número de repeticiones = ${item.count}`,
+                        data: dish
+                    };
+                })
+            );
+            console.log(dishes);
+            return ctx.send(dishes);
+
+        } catch (error) {
+            return ctx.badRequest('No se ha encontrado datos de la consulta de los platos populares')
+        }
+    },
 }
