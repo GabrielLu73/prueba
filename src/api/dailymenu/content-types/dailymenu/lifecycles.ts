@@ -4,25 +4,13 @@ const { ApplicationError } = errors;
 export default{
     beforeUpdate: async(event) => {
         const { data } = event.params;
+        const DISH_PRICE = 'price' 
 
         const ctx = strapi.requestContext.get();
         const { params } = ctx;
         const { id } = params;
 
-        const priceMenu = await strapi.documents('api::dailymenu.dailymenu').findOne({
-            documentId: id,
-            populate:{
-                first: {
-                    fields: 'price',
-                },
-                second: {
-                    fields: 'price',
-                },
-                dessert: {
-                    fields: 'price',
-                }
-            }
-        });
+        const priceMenu = await strapi.service('api::dailymenu.01-custom-dailymenu').findMenu(id, DISH_PRICE)
         
         const { first, second, dessert, documentId } = priceMenu;
 
@@ -39,25 +27,13 @@ export default{
     //Ensure that a dish is not repeated
 
     afterUpdate: async( event ) => {
-        const { result } = event
-        const FIRST_COURSE = "First course"
-        const SECOND_COURSE = "Second course"
-        const DESSERT_COURSE = "Dessert"
+        const { result } = event;
+        const DISH_TYPE = 'type';
+        const FIRST_COURSE = "First course";
+        const SECOND_COURSE = "Second course";
+        const DESSERT_COURSE = "Dessert";
 
-        const sameDish = await strapi.documents('api::dailymenu.dailymenu').findOne({
-            documentId : result.documentId,
-            populate:{
-                first: {
-                    fields: ['type'],
-                },
-                second: {
-                    fields: ['type'],
-                },
-                dessert: {
-                    fields: ['type'],
-                }
-            }
-        });
+        const sameDish = await strapi.service('api::dailymenu.01-custom-dailymenu').findMenu(result.documentId,DISH_TYPE);
 
         const { first, second, dessert } = sameDish;
 
@@ -78,7 +54,5 @@ export default{
         ){
             throw new ApplicationError("No se puede asignar un tipo de plato a otro distinto del menú");
         }
-
-        const menu = await strapi.service('api::dailymenu.01-custom-dailymenu');
     }
 }

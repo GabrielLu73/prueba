@@ -2,7 +2,7 @@ import { factories } from "@strapi/strapi";
 
 export default factories.createCoreService('api::dailymenu.dailymenu', ({ strapi }) => ({
 
-    async getPriceDishes(menuId){
+    async getPriceDishes(menuId:string){
         const priceDishes = await strapi.documents('api::dailymenu.dailymenu').findOne({
             documentId: menuId,
             populate: {
@@ -22,11 +22,29 @@ export default factories.createCoreService('api::dailymenu.dailymenu', ({ strapi
         return menuPriceWithIva;
 
     },
-    async findDishes(id) {
+    async findDishes(id:string) {
         const dishes = await strapi.documents('api::dish.dish').findOne({
             documentId: id
         });
         return dishes;
+    },
+    async findMenu(documentId:string, field:string){
+        const menu = await strapi.documents('api::dailymenu.dailymenu').findOne({
+            documentId: documentId,
+            populate: {
+                first : {
+                    fields: [field]
+                },
+                second: {
+                    fields: [field]
+                },
+                dessert: {
+                    fields: [field]
+                }
+            } as any
+        });
+
+        return menu;
     }
 
 }),
@@ -38,4 +56,3 @@ async function priceWithIVA(menu): Promise<number> {
     const result = priceMenu * IVA_21;
     return parseFloat(result.toFixed(2));
 }
-//vontroller

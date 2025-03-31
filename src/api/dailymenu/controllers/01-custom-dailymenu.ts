@@ -24,42 +24,25 @@ export default {
 
             if(exclude_allergens){
                 const allergensToExclude = exclude_allergens.split(',').map(allergen => allergen.trim());
+                
                 const menu = await strapi.documents('api::dailymenu.dailymenu').findMany({
-                    populate: {
-                        first: {
-                            populate: {
-                                allergens: {
-                                    fields: 'name',
-                                }
-                            }
-                        },
-                        second: {
-                            populate: {
-                                allergens: {
-                                    fields: 'name',
-                                }
-                            }
-                        },
-                        dessert: {
-                            populate: {
-                                allergens: {
-                                    fields: 'name',
-                                }
-                            }
-                        }
+                    populate: { 
+                        first: { populate: { allergens: { fields: 'name',}}},
+                        second: { populate: { allergens: { fields: 'name',}}},
+                        dessert: { populate: { allergens: { fields: 'name',}}}
                     }
                 });
-                console.log(menu)
+                console.log(menu);
 
-                const filterss = menu.filter(m =>{
-                    const { first, second, dessert } = m;
+                const filterss = menu.filter(menu =>{
+                    const { first, second, dessert } = menu;
 
-                    const firstAller  = first?.allergens.some(al => allergensToExclude.includes(al.name));
-                    const secondAller  = second?.allergens.some(al => allergensToExclude.includes(al.name));
-                    const dessertAller  = dessert?.allergens.some(al => allergensToExclude.includes(al.name));
+                    const firstAllergen  = first?.allergens.some(allergen => allergensToExclude.includes(allergen.name));
+                    const secondAllergen  = second?.allergens.some(allergen => allergensToExclude.includes(allergen.name));
+                    const dessertAllergen  = dessert?.allergens.some(allergen => allergensToExclude.includes(allergen.name));
 
-                    return !firstAller && !secondAller && !dessertAller
-                })
+                    return !firstAllergen && !secondAllergen && !dessertAllergen
+                });
 
                 return ctx.send({data: filterss})
             }
