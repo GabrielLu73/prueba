@@ -40,30 +40,45 @@ export default{
 
     afterUpdate: async( event ) => {
         const { result } = event
+        const FIRST_COURSE = "First course"
+        const SECOND_COURSE = "Second course"
+        const DESSERT_COURSE = "Dessert"
 
         const sameDish = await strapi.documents('api::dailymenu.dailymenu').findOne({
             documentId : result.documentId,
             populate:{
                 first: {
-                    fields: 'price',
+                    fields: ['type'],
                 },
                 second: {
-                    fields: 'price',
+                    fields: ['type'],
                 },
                 dessert: {
-                    fields: 'price',
+                    fields: ['type'],
                 }
             }
         });
 
         const { first, second, dessert } = sameDish;
 
-        if (first && second && first.id === second.id || 
-            first && dessert && first.id === dessert.id ||
-            second && dessert && second.id === dessert.id
+        if (first?.id === second?.id || 
+            first?.id === dessert?.id ||
+            second?.id === dessert?.id
         ){
-            throw new ApplicationError('No se puede asiganr el mismo platos en varios campos');
+            throw new ApplicationError('No se puede asignar el mismo platos en varios campos');
         }
-        //controllers
+
+        console.log(second?.type);
+        console.log(SECOND_COURSE);
+        console.log(second?.type===SECOND_COURSE);
+
+        if(first && first?.type !== FIRST_COURSE ||
+            second && second?.type !== SECOND_COURSE ||
+            dessert && dessert?.type !== DESSERT_COURSE
+        ){
+            throw new ApplicationError("No se puede asignar un tipo de plato a otro distinto del menú");
+        }
+
+        const menu = await strapi.service('api::dailymenu.01-custom-dailymenu');
     }
 }
