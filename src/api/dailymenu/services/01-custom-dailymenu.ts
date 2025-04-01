@@ -54,5 +54,6 @@ async function priceWithIVA(menu): Promise<number> {
     const IVA_21 = 1.21;
     const priceMenu = (menu.first?.price ?? 0) + (menu.second?.price ?? 0) + (menu.dessert?.price ?? 0);
     const result = priceMenu * IVA_21;
+
     return parseFloat(result.toFixed(2));
 }

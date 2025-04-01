@@ -33,7 +33,7 @@ export default {
                     }
                 })
 
-                const filterss = menu.filter(menu =>{
+                const filtersMenu = menu.filter(menu =>{
                     const { first, second, dessert } = menu;
 
                     const firstAllergen  = first?.allergens.some(allergen => allergensToExclude.includes(allergen.name));
@@ -43,7 +43,7 @@ export default {
                     return !firstAllergen && !secondAllergen && !dessertAllergen
                 });
 
-                return ctx.send({data: filterss})
+                return ctx.send({data: filtersMenu})
             }
 
             const menus = await strapi.documents('api::dailymenu.dailymenu').findMany({
@@ -107,7 +107,6 @@ export default {
             for (const name in nameCount) {
                 namesArray.push({ documentId: name, count: nameCount[name] });
             }
-            console.log(nameCount)
 
             namesArray.sort((a, b) => b.count - a.count);
 
@@ -127,4 +126,45 @@ export default {
             return ctx.badRequest('No se ha encontrado datos de la consulta de los platos populares')
         }
     },
+    async pop(ctx){
+        try {
+            const menus = await strapi.documents('api::dailymenu.dailymenu').findMany({
+                populate: {
+                    first:{
+                        fields: ['name']
+                    },
+                    second:{
+                        fields: ['name']
+                    },
+                    dessert:{
+                        fields: ['name']
+                    }
+                }
+            });
+
+            const nameCount = {}
+
+            for(const menu of menus){
+                const { first, second,dessert } = menu;
+                [first,second,dessert].forEach(dish => {
+                    if(dish?.name){
+                        nameCount[dish.name] = (nameCount[dish.name] || 0) + 1;
+                    }
+                });
+            }
+
+            const dishesList = Object.entries(nameCount)
+                .sort(([, a], [, b]) => +b - +a)  //(+)cambia el tipo a número y descarta la clave(key) y ordena de mayor a menor por el valor(value)
+                .reduce((obj, [key, value]) => {  //pasa un array a tipo objeto y cada iteración se agrega a obj el elemento
+                    obj[key] = value as number;
+                    return obj;
+                }, {} as Record<string, number>)
+
+            ctx.send({message:"Lista de los platos y sus repeticiónes", data : dishesList})
+
+
+        } catch (error) {   
+            return ctx.badRequest('No hay datos encontrados')
+        }
+    }
 }

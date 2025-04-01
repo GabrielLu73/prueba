@@ -45,11 +45,13 @@ export default{
             throw new ApplicationError('No se puede asignar el mismo platos en varios campos');
         }
 
-        if(first && second && dessert &&
-            first?.type !== FIRST_COURSE ||
-            second?.type !== SECOND_COURSE ||
-            dessert?.type !== DESSERT_COURSE
-        ){
+        if(first && first?.type !== FIRST_COURSE ||
+            second && second?.type !== SECOND_COURSE ||
+            dessert && dessert?.type !== DESSERT_COURSE
+        ){  
+            console.log(second);
+            console.log(second?.type);
+            console.log(SECOND_COURSE);
             throw new ApplicationError("No se puede asignar un tipo de plato a otro distinto del menú");
         }
     }

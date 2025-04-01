@@ -27,5 +27,11 @@ export default{
                 middlewares: []
             },
         },
+        {
+            method : 'GET',
+            path: '/dailymenus/prueba',
+            handler: '01-custom-dailymenu.pop',
+        },
+        
     ],
 }
