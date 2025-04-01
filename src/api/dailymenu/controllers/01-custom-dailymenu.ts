@@ -31,8 +31,7 @@ export default {
                         second: { populate: { allergens: { fields: 'name',}}},
                         dessert: { populate: { allergens: { fields: 'name',}}}
                     }
-                });
-                console.log(menu);
+                })
 
                 const filterss = menu.filter(menu =>{
                     const { first, second, dessert } = menu;
@@ -67,8 +66,6 @@ export default {
             const minPrice = ctx.query.minPrice;
             const maxPrice = ctx.query.maxPrice;
 
-            console.log("query -----------", ctx.query)
-
             const menus = await strapi.documents('api::dailymenu.dailymenu').findMany();
             const menufilter = [];
 
@@ -99,7 +96,6 @@ export default {
             for (const menu of menus) {
                 const { first, second, dessert } = menu;
                 
-                // Usar un array para procesar los tres tipos de platos de manera más concisa
                 [first, second, dessert].forEach(dish => {
                     if (dish?.documentId) {
                         nameCount[dish.documentId] = (nameCount[dish.documentId] || 0) + 1;
@@ -113,11 +109,7 @@ export default {
             }
             console.log(nameCount)
 
-            // Ordenar el array de mayor a menor frecuencia
             namesArray.sort((a, b) => b.count - a.count);
-
-            // Mostrar los resultados ordenados
-            console.log('Nombres ordenados por frecuencia (de mayor a menor):');
 
             const dishes = await Promise.all(
                 namesArray.map(async (item) => {
@@ -128,7 +120,7 @@ export default {
                     };
                 })
             );
-            console.log(dishes);
+
             return ctx.send(dishes);
 
         } catch (error) {
