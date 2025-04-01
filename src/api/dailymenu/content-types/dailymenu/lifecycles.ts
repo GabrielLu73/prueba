@@ -37,20 +37,18 @@ export default{
 
         const { first, second, dessert } = sameDish;
 
-        if (first?.id === second?.id || 
+        if (first && second && dessert &&
+            first?.id === second?.id || 
             first?.id === dessert?.id ||
             second?.id === dessert?.id
         ){
             throw new ApplicationError('No se puede asignar el mismo platos en varios campos');
         }
 
-        console.log(second?.type);
-        console.log(SECOND_COURSE);
-        console.log(second?.type===SECOND_COURSE);
-
-        if(first && first?.type !== FIRST_COURSE ||
-            second && second?.type !== SECOND_COURSE ||
-            dessert && dessert?.type !== DESSERT_COURSE
+        if(first && second && dessert &&
+            first?.type !== FIRST_COURSE ||
+            second?.type !== SECOND_COURSE ||
+            dessert?.type !== DESSERT_COURSE
         ){
             throw new ApplicationError("No se puede asignar un tipo de plato a otro distinto del menú");
         }
