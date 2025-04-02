@@ -158,7 +158,7 @@ export default {
                 .reduce((obj, [key, value]) => {  //pasa un array a tipo objeto y cada iteración se agrega a obj el elemento
                     obj[key] = value as number;
                     return obj;
-                }, {} as Record<string, number>)
+                }, {} as Record<string, number>)  //los datos que te devuelve son de los tipos
 
             ctx.send({message:"Lista de los platos y sus repeticiónes", data : dishesList})
 
