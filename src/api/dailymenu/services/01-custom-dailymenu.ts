@@ -24,7 +24,8 @@ export default factories.createCoreService('api::dailymenu.dailymenu', ({ strapi
     },
     async findDishes(id:string) {
         const dishes = await strapi.documents('api::dish.dish').findOne({
-            documentId: id
+            documentId: id,
+            status: 'published'
         });
         return dishes;
     },

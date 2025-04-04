@@ -11,7 +11,7 @@ export default{
         },
         {
             method : 'GET',
-            path: '/dailymenus',
+            path: '/dailymenu',
             handler: '01-custom-dailymenu.findMenusByRangeOfPrice',
             config: {
                 policies: [],

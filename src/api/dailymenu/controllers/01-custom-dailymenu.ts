@@ -4,12 +4,13 @@ export default {
     async findDesserts(ctx){
         try {
             const allDesserts = await strapi.documents('api::dailymenu.dailymenu').findMany({
-                fields : 'day',
+                fields : '*',
                 populate: {
                     dessert:{
                         fields : ['name','price']
                     }
-                }
+                },
+                status: 'published',
             });
 
             return ctx.send({message : "datos de los postres" ,data : allDesserts})
@@ -30,7 +31,8 @@ export default {
                         first: { populate: { allergens: { fields: 'name',}}},
                         second: { populate: { allergens: { fields: 'name',}}},
                         dessert: { populate: { allergens: { fields: 'name',}}}
-                    }
+                    },
+                    status: 'published',
                 })
 
                 const filtersMenu = menu.filter(menu =>{
@@ -52,7 +54,8 @@ export default {
                         $gte: min_price,
                         $lte: max_price
                     }
-                }
+                },
+                status: 'published',
             });
             
             return ctx.send({message: "datos de los menus por precios", data: menus});
@@ -88,7 +91,8 @@ export default {
                     first: { populate: { allergens: { fields: 'name',}}},
                     second: { populate: { allergens: { fields: 'name',}}},
                     dessert: { populate: { allergens: { fields: 'name',}}}
-                }
+                },
+                status: 'published',
             });
 
             const nameCount = {}
@@ -139,7 +143,8 @@ export default {
                     dessert:{
                         fields: ['name']
                     }
-                }
+                },
+                status: 'published',
             });
 
             const nameCount = {}

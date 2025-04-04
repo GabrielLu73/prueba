@@ -33,9 +33,9 @@ export default{
         const SECOND_COURSE = "Second course";
         const DESSERT_COURSE = "Dessert";
 
-        const sameDish = await strapi.service('api::dailymenu.01-custom-dailymenu').findMenu(result.documentId,DISH_TYPE);
+        const menu = await strapi.service('api::dailymenu.01-custom-dailymenu').findMenu(result.documentId,DISH_TYPE);
 
-        const { first, second, dessert } = sameDish;
+        const { first, second, dessert } = menu;
 
         if (first && second && dessert &&
             first?.id === second?.id || 
