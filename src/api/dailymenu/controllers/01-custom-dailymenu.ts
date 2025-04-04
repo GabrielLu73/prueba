@@ -1,5 +1,3 @@
-import { platform } from "os";
-
 export default {
     async findDesserts(ctx){
         try {
@@ -45,7 +43,7 @@ export default {
                     return !firstAllergen && !secondAllergen && !dessertAllergen
                 });
 
-                return ctx.send({data: filtersMenu})
+                return ctx.send({data: filtersMenu})    
             }
 
             const menus = await strapi.documents('api::dailymenu.dailymenu').findMany({
