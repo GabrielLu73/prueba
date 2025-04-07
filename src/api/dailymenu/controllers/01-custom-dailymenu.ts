@@ -157,11 +157,11 @@ export default {
             }
 
             const dishesList = Object.entries(nameCount)
-                .sort(([, a], [, b]) => +b - +a)  //(+)cambia el tipo a número y descarta la clave(key) y ordena de mayor a menor por el valor(value)
-                .reduce((obj, [key, value]) => {  //pasa un array a tipo objeto y cada iteración se agrega a obj el elemento
+                .sort(([, a], [, b]) => +b - +a)  
+                .reduce((obj, [key, value]) => { 
                     obj[key] = value as number;
                     return obj;
-                }, {} as Record<string, number>)  //los datos que te devuelve son de los tipos
+                }, {} as Record<string, number>) 
 
             ctx.send({message:"Lista de los platos y sus repeticiónes", data : dishesList})
 
